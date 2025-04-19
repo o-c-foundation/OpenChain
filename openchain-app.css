@@ -1,0 +1,178 @@
+/* Main Styles */
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    background-color: #f8f9fa;
+    color: #212529;
+}
+
+.navbar-brand strong {
+    color: #0d6efd;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #6c757d;
+}
+
+.hash, .address {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+/* Dashboard */
+.stats-card {
+    transition: transform 0.2s;
+}
+
+.stats-card:hover {
+    transform: translateY(-5px);
+}
+
+.stats-card .card-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #6c757d;
+}
+
+.stats-card .card-value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: #0d6efd;
+}
+
+/* Block/Transaction Explorer */
+#detailView {
+    display: none;
+    margin-top: 20px;
+}
+
+/* Wallet */
+#walletMainContent {
+    display: none;
+}
+
+.wallet-info {
+    background-color: #e9ecef;
+    border-radius: 0.5rem;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+#walletBalance {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #198754;
+}
+
+.wallet-address-field {
+    background-color: #f8f9fa;
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Footer */
+.footer {
+    margin-top: 60px;
+    padding: 20px 0;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .stats-card .card-value {
+        font-size: 1.5rem;
+    }
+    
+    .hash, .address {
+        max-width: 120px;
+    }
+}
+
+/* Toast notifications */
+.toast-container {
+    z-index: 1050;
+}
+
+.toast {
+    min-width: 300px;
+}
+
+/* Tab content */
+.tab-content > .tab-pane {
+    padding: 20px 0;
+}
+
+/* Table hover effect */
+.table-hover tbody tr:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+}
+
+/* Cards */
+.card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    border: none;
+    margin-bottom: 20px;
+}
+
+.card-header {
+    background-color: #fff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+    font-weight: 600;
+}
+
+/* Pagination */
+.pagination {
+    margin-top: 20px;
+}
+
+/* List group for blocks and transactions */
+.list-group-item {
+    border-left: none;
+    border-right: none;
+    padding: 0.75rem 1.25rem;
+}
+
+.list-group-item:first-child {
+    border-top: none;
+}
+
+/* Search box */
+.search-box {
+    max-width: 300px;
+}
+
+/* Button animations */
+.btn {
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+/* Node info */
+.node-id {
+    font-size: 0.875rem;
+    color: #6c757d;
+}
+
+/* Wallet not loaded info */
+.wallet-info-card {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 30px;
+}
+
+.wallet-info-card h5 {
+    margin-bottom: 20px;
+} 

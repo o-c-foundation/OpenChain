@@ -2,6 +2,7 @@ class Explorer {
     constructor() {
         this.currentPage = 'blocks';
         this.currentPageNumber = 1;
+        this.refreshInterval = null;
         this.setupEventListeners();
         this.loadPage('blocks');
     }
@@ -25,6 +26,12 @@ class Explorer {
     }
 
     async loadPage(page) {
+        // Clear any existing refresh interval
+        if (this.refreshInterval) {
+            clearInterval(this.refreshInterval);
+            this.refreshInterval = null;
+        }
+
         this.currentPage = page;
         const content = document.getElementById('content');
         content.innerHTML = '<div class="loading">Loading...</div>';
@@ -37,6 +44,8 @@ class Explorer {
                     break;
                 case 'transactions':
                     html = await this.loadTransactions();
+                    // Set up auto-refresh for transactions page
+                    this.refreshInterval = setInterval(() => this.refreshTransactions(), 5000);
                     break;
                 case 'contracts':
                     html = await this.loadContracts();
@@ -94,8 +103,20 @@ class Explorer {
     }
 
     async loadTransactions() {
-        const response = await fetch(`/api/transactions?page=${this.currentPageNumber}`);
-        const data = await response.json();
+        // Load both confirmed and pending transactions
+        const [confirmedResponse, pendingResponse] = await Promise.all([
+            fetch(`/api/transactions?page=${this.currentPageNumber}`),
+            fetch('/api/transactions/pending')
+        ]);
+        
+        const confirmedData = await confirmedResponse.json();
+        const pendingData = await pendingResponse.json();
+
+        // Combine confirmed and pending transactions
+        const allTransactions = [
+            ...pendingData.transactions.map(tx => ({ ...tx, status: 'pending' })),
+            ...confirmedData.transactions.map(tx => ({ ...tx, status: 'confirmed' }))
+        ];
 
         let html = `
             <h2>Latest Transactions</h2>
@@ -108,31 +129,64 @@ class Explorer {
                             <th>To</th>
                             <th>Amount</th>
                             <th>Status</th>
+                            <th>Time</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="transactionTableBody">
         `;
 
-        data.transactions.forEach(tx => {
-            html += `
-                <tr>
-                    <td class="hash">${tx.id}</td>
-                    <td class="address">${tx.from}</td>
-                    <td class="address">${tx.to}</td>
-                    <td>${tx.amount} OpenT</td>
-                    <td><span class="badge bg-success">${tx.status}</span></td>
-                </tr>
-            `;
+        allTransactions.forEach(tx => {
+            html += this.renderTransactionRow(tx);
         });
 
         html += `
                     </tbody>
                 </table>
             </div>
-            ${this.createPagination(data.totalPages)}
+            ${this.createPagination(confirmedData.totalPages)}
         `;
 
         return html;
+    }
+
+    renderTransactionRow(tx) {
+        const statusClass = tx.status === 'pending' ? 'bg-warning' : 'bg-success';
+        return `
+            <tr>
+                <td class="hash">${tx.id}</td>
+                <td class="address">${tx.from}</td>
+                <td class="address">${tx.to}</td>
+                <td>${tx.amount} OpenT</td>
+                <td><span class="badge ${statusClass}">${tx.status}</span></td>
+                <td>${new Date(tx.timestamp).toLocaleString()}</td>
+            </tr>
+        `;
+    }
+
+    async refreshTransactions() {
+        if (this.currentPage !== 'transactions') return;
+
+        try {
+            const [confirmedResponse, pendingResponse] = await Promise.all([
+                fetch(`/api/transactions?page=${this.currentPageNumber}`),
+                fetch('/api/transactions/pending')
+            ]);
+            
+            const confirmedData = await confirmedResponse.json();
+            const pendingData = await pendingResponse.json();
+
+            const allTransactions = [
+                ...pendingData.transactions.map(tx => ({ ...tx, status: 'pending' })),
+                ...confirmedData.transactions.map(tx => ({ ...tx, status: 'confirmed' }))
+            ];
+
+            const tbody = document.getElementById('transactionTableBody');
+            if (tbody) {
+                tbody.innerHTML = allTransactions.map(tx => this.renderTransactionRow(tx)).join('');
+            }
+        } catch (error) {
+            console.error('Error refreshing transactions:', error);
+        }
     }
 
     async loadContracts() {
@@ -251,118 +305,3 @@ class Explorer {
         // Page numbers
         for (let i = 1; i <= totalPages; i++) {
             html += `
-                <li class="page-item ${i === this.currentPageNumber ? 'active' : ''}">
-                    <a class="page-link" href="#" onclick="explorer.changePage(${i})">${i}</a>
-                </li>
-            `;
-        }
-
-        // Next button
-        html += `
-            <li class="page-item ${this.currentPageNumber === totalPages ? 'disabled' : ''}">
-                <a class="page-link" href="#" onclick="explorer.changePage(${this.currentPageNumber + 1})">Next</a>
-            </li>
-        `;
-
-        html += '</ul></nav>';
-        return html;
-    }
-
-    changePage(page) {
-        this.currentPageNumber = page;
-        this.loadPage(this.currentPage);
-    }
-
-    async search(query) {
-        const response = await fetch(`/api/search?q=${query}`);
-        const result = await response.json();
-
-        if (result.error) {
-            alert(result.error);
-            return;
-        }
-
-        let html = '<div class="card"><div class="card-body">';
-        
-        switch (result.type) {
-            case 'block':
-                html += this.renderBlock(result.data);
-                break;
-            case 'transaction':
-                html += this.renderTransaction(result.data);
-                break;
-            case 'address':
-                html += this.renderAddress(result.data);
-                break;
-            case 'contract':
-                html += this.renderContract(result.data);
-                break;
-        }
-
-        html += '</div></div>';
-        document.getElementById('content').innerHTML = html;
-    }
-
-    renderBlock(block) {
-        return `
-            <h3>Block ${block.number}</h3>
-            <p><strong>Hash:</strong> <span class="hash">${block.hash}</span></p>
-            <p><strong>Previous Hash:</strong> <span class="hash">${block.previousHash}</span></p>
-            <p><strong>Timestamp:</strong> ${new Date(block.timestamp).toLocaleString()}</p>
-            <p><strong>Transactions:</strong> ${block.transactions.length}</p>
-        `;
-    }
-
-    renderTransaction(tx) {
-        return `
-            <h3>Transaction</h3>
-            <p><strong>Hash:</strong> <span class="hash">${tx.id}</span></p>
-            <p><strong>From:</strong> <span class="address">${tx.from}</span></p>
-            <p><strong>To:</strong> <span class="address">${tx.to}</span></p>
-            <p><strong>Amount:</strong> ${tx.amount} OpenT</p>
-            <p><strong>Status:</strong> <span class="badge bg-success">${tx.status}</span></p>
-        `;
-    }
-
-    renderAddress(address) {
-        return `
-            <h3>Address ${address.address}</h3>
-            <p><strong>Balance:</strong> ${address.balance} OpenT</p>
-            <p><strong>Transaction Count:</strong> ${address.transactionCount}</p>
-        `;
-    }
-
-    renderContract(contract) {
-        return `
-            <h3>Contract ${contract.address}</h3>
-            <p><strong>Owner:</strong> <span class="address">${contract.owner}</span></p>
-            <p><strong>Balance:</strong> ${contract.balance} OpenT</p>
-            <p><strong>State:</strong></p>
-            <pre>${JSON.stringify(contract.state, null, 2)}</pre>
-        `;
-    }
-
-    async viewContract(address) {
-        const response = await fetch(`/api/contracts/${address}`);
-        const contract = await response.json();
-        
-        let html = `
-            <div class="card">
-                <div class="card-header">
-                    <h5 class="mb-0">Contract Details</h5>
-                </div>
-                <div class="card-body">
-                    ${this.renderContract(contract)}
-                </div>
-            </div>
-            <button class="btn btn-secondary mt-3" onclick="explorer.loadPage('contracts')">
-                Back to Contracts
-            </button>
-        `;
-
-        document.getElementById('content').innerHTML = html;
-    }
-}
-
-// Initialize explorer
-const explorer = new Explorer(); 

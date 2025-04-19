@@ -1,0 +1,31 @@
+{
+  "network": {
+    "name": "OpenChain Testnet",
+    "version": "1.0.0",
+    "nodes": [
+      {
+        "id": "node1",
+        "host": "98.82.10.184",
+        "port": 9001,
+        "role": "primary"
+      },
+      {
+        "id": "node2",
+        "host": "52.70.33.81",
+        "port": 9002,
+        "role": "validator"
+      }
+    ],
+    "consensus": {
+      "algorithm": "proof-of-work",
+      "blockTime": 10000,
+      "difficulty": 4
+    },
+    "networking": {
+      "heartbeatInterval": 5000,
+      "syncInterval": 10000,
+      "maxPeers": 2,
+      "discoveryEnabled": true
+    }
+  }
+} 

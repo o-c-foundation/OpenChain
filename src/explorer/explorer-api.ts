@@ -92,6 +92,14 @@ export class ExplorerAPI {
             res.json(transaction);
         });
 
+        this.app.get('/api/transactions/pending', (req, res) => {
+            const pendingTransactions = Array.from(this.blockchain.instantTransactions.values());
+            res.json({
+                transactions: pendingTransactions,
+                total: pendingTransactions.length
+            });
+        });
+
         // Address information
         this.app.get('/api/addresses/:address', (req, res) => {
             const balance = this.blockchain.getBalanceOfAddress(req.params.address);

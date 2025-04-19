@@ -1,0 +1,431 @@
+/* Base styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    background-color: #f5f7fa;
+    color: #2c3e50;
+}
+
+/* Navigation */
+.navbar {
+    background-color: #2c3e50;
+    padding: 1rem;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-brand {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
+    margin: 0 0.25rem;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+}
+
+.nav-links a:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.nav-links a.active {
+    background-color: rgba(255,255,255,0.2);
+}
+
+/* Simulation Controls */
+.simulation-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.simulation-status {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+/* Search */
+.search-container {
+    padding: 1rem;
+    background-color: white;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+#searchForm {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    gap: 1rem;
+}
+
+#searchInput {
+    flex: 1;
+    padding: 0.5rem;
+    border: 1px solid #e1e8ed;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* Main Content */
+main {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Cards */
+.card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.card h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #2c3e50;
+}
+
+/* Grid Layout */
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Metrics */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+}
+
+.metric {
+    text-align: center;
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 6px;
+}
+
+.metric .label {
+    display: block;
+    font-size: 0.9rem;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.metric .value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+/* Charts */
+.chart-card {
+    grid-column: 1 / -1;
+}
+
+/* Tables */
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+th, td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #e1e8ed;
+}
+
+th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
+
+/* Event Log */
+.event-log {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.event-entry {
+    padding: 0.5rem;
+    border-bottom: 1px solid #e1e8ed;
+    font-size: 0.9rem;
+}
+
+.event-time {
+    color: #6c757d;
+    margin-right: 1rem;
+}
+
+/* Status Indicators */
+.status-confirmed {
+    color: #28a745;
+}
+
+.status-failed {
+    color: #dc3545;
+}
+
+.status-pending {
+    color: #ffc107;
+}
+
+/* Hash Display */
+.hash {
+    font-family: monospace;
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.btn-primary {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #2980b9;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Configuration Controls */
+.config-controls {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.control-group label {
+    font-size: 0.9rem;
+    color: #6c757d;
+}
+
+.control-group input {
+    padding: 0.5rem;
+    border: 1px solid #e1e8ed;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+/* Sections */
+section {
+    display: none;
+}
+
+section.active {
+    display: block;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .nav-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .simulation-controls {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .grid-container {
+        grid-template-columns: 1fr;
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Custom styles for OpenT Wallet */
+
+/* General styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Card customization */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card-header {
+    border-top-left-radius: 10px !important;
+    border-top-right-radius: 10px !important;
+    padding: 15px 20px;
+}
+
+.card-body {
+    padding: 20px;
+}
+
+/* Balance display */
+#walletBalance {
+    color: #0d6efd;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Form elements */
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 10px 15px;
+}
+
+.form-control:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+.btn-primary:hover {
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+}
+
+/* Transaction table */
+.table {
+    margin-bottom: 0;
+}
+
+.table th {
+    border-top: none;
+    color: #6c757d;
+    font-weight: 600;
+}
+
+.table td {
+    vertical-align: middle;
+}
+
+/* Status badges */
+.badge {
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-weight: 500;
+}
+
+.badge-success {
+    background-color: #198754;
+    color: white;
+}
+
+.badge-pending {
+    background-color: #ffc107;
+    color: #000;
+}
+
+/* Network status indicator */
+#networkStatus {
+    font-size: 14px;
+}
+
+#networkStatus.connected {
+    color: #198754;
+}
+
+#networkStatus.disconnected {
+    color: #dc3545;
+}
+
+/* Modal customization */
+.modal-content {
+    border-radius: 12px;
+    border: none;
+}
+
+.modal-header {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    background-color: #0d6efd;
+    color: white;
+}
+
+.modal-header .btn-close {
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .card {
+        margin-bottom: 15px;
+    }
+    
+    .table-responsive {
+        margin: 0 -15px;
+    }
+} 

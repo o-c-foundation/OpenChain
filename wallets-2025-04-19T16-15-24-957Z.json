@@ -1,0 +1,127 @@
+{
+  "totalWallets": 20,
+  "totalDistribution": 200000,
+  "createdAt": "2025-04-19T16:15:24.956Z",
+  "wallets": [
+    {
+      "address": "0x534c88e573a2143dea48b68348a310e23091693f",
+      "publicKey": "047904a0d060a3d10c85a43ba080a9761ebdf1925693574b1a4c23d5a48882b4919b6b1098a38c04ce9a5cb04d5977ddcdcbc9ca8def943f44d6829924f2c91959",
+      "privateKey": "4f8f393b6a4c79cada5d4778918376db5a3f8c030195c310018274198be573a1",
+      "balance": 10000
+    },
+    {
+      "address": "0xd8601925b042eeac20cef3a8745f4b478f1165e9",
+      "publicKey": "04151a9ff30707985c6d7b87ccb60be94dede87776ef5ecaae86669997705994c9cabf1855e2e16fbaf7c84fa65a6ceaf62fd71ea0952e34050e20912b81836ccf",
+      "privateKey": "f72dd6a7b0b64c5f73305a39b9e2fd281a0aff494eb42b53d3bd6a10a8c812d2",
+      "balance": 10000
+    },
+    {
+      "address": "0xe8d119ef8325340e3a8b73c6caeb61f9abc311f0",
+      "publicKey": "045430a3dfef853d1d47438f0190bc09c15c729648a865beca64d99fa3196491961ec32fb2757bc42a27f765ddfe81a7454467fef2ec18223eaa1e7b89c38c74dc",
+      "privateKey": "0b64b01bcc0f57edf43ffc593ebd3f6decdc0539e710f342d2ed2ebb874a579d",
+      "balance": 10000
+    },
+    {
+      "address": "0xdf77a5f4a14fa9f4ae8aeec6100093fa82fedf80",
+      "publicKey": "04b11ae1ff0eb8fb36d9b4716d3b3d3c3a76411aa02d673b9ddd23937223121958d83b3e5773c74eb2ae7c6627f25cd806cb5e5c57b158b6121acc97424f5c7384",
+      "privateKey": "c917fe30592f07b4ea9e5aaad43991468f525b43fdd4388afeb1403f4b7809b6",
+      "balance": 10000
+    },
+    {
+      "address": "0x0cf328cdff5d111202c15035170e2813b9852485",
+      "publicKey": "04ae9da20c957444b293cd9e0a4fa7b3f396f2aa3807a8fbd779b3d2b124392370557645325076ebffd2f729246204d53da7c3e37b26053aa18aa71f9be78a9ae4",
+      "privateKey": "7ef1045fbff9f4de0055f99c4452892e5a7fdc257ec1305f73c001d622e85cdb",
+      "balance": 10000
+    },
+    {
+      "address": "0x86a6f11d12300028b4388e87fa4f3f8545e12655",
+      "publicKey": "04e8a1d4dea4b821e3d3d3a3d2e6ca0ada61356b4f86f95594c88272409b945ce5baf0863a54f3e50c669ef90b98814ed49e3dfe11ba25ae247a5559e40f730cd3",
+      "privateKey": "f3c437aada205b7ce2058a7b3b133b207e6e433f5f5f3b9190316471aa47a47f",
+      "balance": 10000
+    },
+    {
+      "address": "0x1b59355100920ca18bcad8f30eb7ae3e909f730b",
+      "publicKey": "0452ee6c47729a057d955672bb71f8e6b53945745dc6b01ffd3700354f35ece16383f20ac60f1d0db3262e49e561fce68a52d287fb0810ad8d5cf965099834e288",
+      "privateKey": "b404d5397a4cb749326612c1b637d6782a5038be4317c8a1960fb5bcb9c7fa22",
+      "balance": 10000
+    },
+    {
+      "address": "0x94ac388b65e29145d8bc1ed00f027c47d35e6bb9",
+      "publicKey": "045570744c3ce4a67ecad6b54d44663e328e04557a9cf3cbc08bc775764385d1bcee30f3a31a8e224d77cc9fcbc56c3520642454ac2dbc740ea90714fde0230fa0",
+      "privateKey": "a826b4d9f49ab44e3b117ec3971fc3a2f379cfdfdd54f1c68e4b5ed995e4cd97",
+      "balance": 10000
+    },
+    {
+      "address": "0xd1502b23e6efb896f2525b6d661d7fd07f7b46f1",
+      "publicKey": "04b6d74d84c8539326cce9609e07be1219a6bea4c97c24b325bcc2fc423d969f4b1a563c3fa6dedbeb4b71d768f3670f011897ceeeaf647db098e6df1ebc959613",
+      "privateKey": "cdfcfcedf5a7966f949b1602eeee03fafc141756fe8d4fbfdd9441a9f490620c",
+      "balance": 10000
+    },
+    {
+      "address": "0x081ef19e88a8d0ee599dfe117603fbaeed6aaf0b",
+      "publicKey": "0417ebdce6fc8d1c8132cb0b8602f483f44e642f3827f28fcf266d13ccde538073920b0e87e49feae9c41cd79b5a05be636177269a9b3c419498038fa06f7fbac9",
+      "privateKey": "6c487cf047e635c284d50cfba6d614c5345aa466e2b8d6e3ddfaecd41972b3e1",
+      "balance": 10000
+    },
+    {
+      "address": "0x2bcaf616258c2206f0d914158f5093824d087824",
+      "publicKey": "04ca37769ea33473382cd09e1dd95b40da94085f2d06df1bbb1c37e46f592f85aaf0bd9b9b89a385c0d233cb4c6c49387f64661543e7af7d8b492fd364402f9f77",
+      "privateKey": "03b0006aa779ce5d5cf3e97521240971cc7562c7955e768c948a3ccb76876bdf",
+      "balance": 10000
+    },
+    {
+      "address": "0x68ac1c8b2179a35ff455a57edf347f119859e86c",
+      "publicKey": "042667aa4c212a9565ec824a5ad47a3cc979e95f188efd87e529520d8b7257d92ca93733d0163ad387311f9f44386092d0370f7ca5f4d5674168ef6d7f62dbd278",
+      "privateKey": "9c8942c2ab0d766f7910f5bdf0069723f56492b974d781e7068bad60e9d9ad5a",
+      "balance": 10000
+    },
+    {
+      "address": "0xf43fb61ff1940ec6c848b8f87172d597cabd3ef4",
+      "publicKey": "0425abaa24fd42c21ee5d14815aee1a3a81c56e0d1e834e7b330392fbfcf6c513de8586779bbad7ba2716ab8cb719cc48dd30fdb18fb0e66b319de45506385184b",
+      "privateKey": "bf6d1b4fe72bc96283076f300485c9b79237f8d1c487b1f5c4d1b7e6301ffe9c",
+      "balance": 10000
+    },
+    {
+      "address": "0x09a919b4ab86bc8e2a5321b7aa836bee6e90d4cf",
+      "publicKey": "041b9cae9040f43920cc82a6193439bd590eba772ba31d1875b1e01758f82d092da71718962ce45cee37cb1ef3d18a465ec1e6d71135248d29e7c513adf772270b",
+      "privateKey": "0823e5540cff5f4e0ecf708549c37466c962570e632e816b33d6116a0fe09fd9",
+      "balance": 10000
+    },
+    {
+      "address": "0x1345db36d9444b868af75de78a1ddfc9f1617792",
+      "publicKey": "043e76a28201b85b05631bc1d150be13e30840752ce6365cc37872e40a8eff39c365794b87d275e4ecabed5df1ca9238623cd28f3268e64b02ce78613087ab7b1d",
+      "privateKey": "1c68a23bcd4640f85a968980c80ce99e53e98f442b49a044f8767834a5621413",
+      "balance": 10000
+    },
+    {
+      "address": "0xbe1ed54e7e2b9db4074f066992e2307bc2a9b1d4",
+      "publicKey": "048f37c6345d0cead69f49e6554279439de94e51f5204dc6e09057cca4b459e8bc23d8bacee3ab99ba108e39dcdc1e8d0e5ef1be5582beb68b897e73f3a4363fab",
+      "privateKey": "f6ccc8cb242ec3b534b0ec5ac4186cb246445acdb09a32fa260d135a609168e0",
+      "balance": 10000
+    },
+    {
+      "address": "0x70c0ab769b73651f349b62e81e728ae99709de25",
+      "publicKey": "043ab1b41a18e43d1a77fe56e7877de44f4e0cec9499042044e0ea3f18a358477f128ddcc8f0b565edeb018152d26518bacf8c539b1aeef9ef4ca5e5840c961d59",
+      "privateKey": "2d56fad786bf8d68ee06cda0e895bb0750af4a4d56789ad2116b276aa96c8788",
+      "balance": 10000
+    },
+    {
+      "address": "0x03e72e446a8c02c42847bd49c2d301ae5cd92b60",
+      "publicKey": "04bffe0db52f5524b8822d5f1c9d1b43b282d941b5cd1251eabbcd020850ccbf5f132fb40c557bc95ef475a8a32885563a7def9d1a51c366d632d886b7567287b9",
+      "privateKey": "4d5ddecc3199809e136ffc7888dd6b6349ff870241106497e73861359a1e6678",
+      "balance": 10000
+    },
+    {
+      "address": "0x95c24df9a5d022578b8f265b9e3635347a77bf93",
+      "publicKey": "04c831417a5b74f54c565c9dc5fcfb37d9ce6ce66280dbb5cd3985f1a32037fbebce3e170a356d9d2d2bb076be3a98f1721e0bc43c57dd37326af72d9bdb0133f0",
+      "privateKey": "f537bc9ec5d1ff1c23e6ce37131069f948431637b539ae94fc067fc3ed491681",
+      "balance": 10000
+    },
+    {
+      "address": "0xd68cbd5610d774e6a738cf5824c7e89c62755d98",
+      "publicKey": "049c22e7f1047c96b7740fb91c1476c83899178d90353f7d47b92dad8c2c6403ce17f356f4800aca001cc2c45853c84142648f62fcd1267c7e3258b318d4e95d45",
+      "privateKey": "65fdf2da6a0b7a697971d105500c46b82225d301726e220c3ec07b968e9dfbb7",
+      "balance": 10000
+    }
+  ]
+}

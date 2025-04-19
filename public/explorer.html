@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenChain Block Explorer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        .transaction-row:hover {
+            background-color: #f8f9fa;
+        }
+        .stats-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+        .block-card {
+            transition: transform 0.2s;
+        }
+        .block-card:hover {
+            transform: translateY(-5px);
+        }
+        .network-status {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 14px;
+        }
+        .status-online {
+            background-color: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-cube me-2"></i>OpenChain Explorer
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="network-status status-online">
+                    <i class="fas fa-circle me-1"></i>Network Online
+                </span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <!-- Network Statistics -->
+            <div class="col-md-12 mb-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-chart-line me-2"></i>Network Statistics</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-3 text-center">
+                                <div class="stats-label">Block Height</div>
+                                <div class="stats-value" id="blockHeight">0</div>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <div class="stats-label">Total Transactions</div>
+                                <div class="stats-value" id="totalTransactions">0</div>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <div class="stats-label">Coin Price (USD)</div>
+                                <div class="stats-value" id="coinPrice">$0</div>
+                            </div>
+                            <div class="col-md-3 text-center">
+                                <div class="stats-label">Active Nodes</div>
+                                <div class="stats-value" id="activeNodes">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Latest Blocks -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-cubes me-2"></i>Latest Blocks</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="latestBlocks"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Latest Transactions -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-exchange-alt me-2"></i>Latest Transactions</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="latestTransactions"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Wallet Search -->
+            <div class="col-md-12 mt-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-search me-2"></i>Search Wallet</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group mb-3">
+                            <input type="text" class="form-control" id="walletAddress" placeholder="Enter wallet address">
+                            <button class="btn btn-primary" type="button" onclick="searchWallet()">
+                                <i class="fas fa-search me-1"></i>Search
+                            </button>
+                        </div>
+                        <div id="walletInfo" class="d-none">
+                            <h5>Wallet Information</h5>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <p><strong>Balance:</strong> <span id="walletBalance">0</span> OpenT</p>
+                                    <p><strong>USD Value:</strong> $<span id="walletBalanceUSD">0</span></p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p><strong>Total Transactions:</strong> <span id="walletTotalTx">0</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const API_URL = 'http://98.82.10.184:9001';
+        let lastBlockHeight = -1;
+
+        async function updateNetworkStats() {
+            try {
+                const response = await fetch(`${API_URL}/status`);
+                const data = await response.json();
+                
+                document.getElementById('blockHeight').textContent = data.blockHeight;
+                document.getElementById('coinPrice').textContent = `$${data.coinPrice}`;
+                document.getElementById('activeNodes').textContent = data.peers.length + 1;
+                
+                if (data.blockHeight !== lastBlockHeight) {
+                    lastBlockHeight = data.blockHeight;
+                    updateBlocks();
+                }
+            } catch (error) {
+                console.error('Error fetching network stats:', error);
+            }
+        }
+
+        async function updateBlocks() {
+            try {
+                const response = await fetch(`${API_URL}/blocks`);
+                const data = await response.json();
+                
+                const blocksHtml = data.blocks.slice(-5).reverse().map(block => `
+                    <div class="card mb-3 block-card">
+                        <div class="card-body">
+                            <h6 class="card-subtitle mb-2 text-muted">Block #${block.index}</h6>
+                            <p class="card-text">
+                                <small>Hash: ${block.hash.substring(0, 20)}...</small><br>
+                                <small>Transactions: ${block.transactions.length}</small><br>
+                                <small>Time: ${new Date(block.timestamp).toLocaleString()}</small>
+                            </p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                document.getElementById('latestBlocks').innerHTML = blocksHtml;
+                
+                // Update total transactions
+                const totalTx = data.blocks.reduce((acc, block) => acc + block.transactions.length, 0);
+                document.getElementById('totalTransactions').textContent = totalTx;
+            } catch (error) {
+                console.error('Error fetching blocks:', error);
+            }
+        }
+
+        async function searchWallet() {
+            const address = document.getElementById('walletAddress').value;
+            if (!address) return;
+
+            try {
+                const [balanceResponse, blocksResponse] = await Promise.all([
+                    fetch(`${API_URL}/balance/${address}`),
+                    fetch(`${API_URL}/blocks`)
+                ]);
+
+                const balanceData = await balanceResponse.json();
+                const blocksData = await blocksResponse.json();
+
+                // Count transactions for this wallet
+                let totalTx = 0;
+                blocksData.blocks.forEach(block => {
+                    block.transactions.forEach(tx => {
+                        if (tx.data.from === address || tx.data.to === address) {
+                            totalTx++;
+                        }
+                    });
+                });
+
+                document.getElementById('walletBalance').textContent = balanceData.balance;
+                document.getElementById('walletBalanceUSD').textContent = balanceData.balanceUSD.toLocaleString();
+                document.getElementById('walletTotalTx').textContent = totalTx;
+                document.getElementById('walletInfo').classList.remove('d-none');
+            } catch (error) {
+                console.error('Error fetching wallet info:', error);
+            }
+        }
+
+        // Update data every 5 seconds
+        setInterval(updateNetworkStats, 5000);
+
+        // Initial load
+        updateNetworkStats();
+        updateBlocks();
+    </script>
+</body>
+</html> 

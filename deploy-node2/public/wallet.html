@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenT Wallet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">OpenT Wallet</a>
+            <div class="d-flex align-items-center">
+                <span class="text-white me-3" id="networkStatus">Connecting...</span>
+                <button class="btn btn-outline-light me-2" id="quickAccessBtn">Quick Access</button>
+                <button class="btn btn-outline-light" id="createWalletBtn">Create New Wallet</button>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <!-- Quick Access Alert -->
+        <div class="alert alert-info alert-dismissible fade show mb-4" role="alert" id="quickAccessAlert">
+            <strong>Welcome!</strong> Click "Quick Access" to load your wallet with address 0xB4844D547E444d340315A36fdAB4c5cd5259063C
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
+        <div class="row">
+            <!-- Wallet Overview -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Wallet Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <label class="form-label">Address</label>
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="walletAddress" readonly>
+                                <button class="btn btn-outline-secondary" id="copyAddressBtn">Copy</button>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Balance</label>
+                            <h3 id="walletBalance">0 OpenT</h3>
+                        </div>
+                        <button class="btn btn-primary w-100" id="refreshBalanceBtn">Refresh Balance</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Send OpenT -->
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">Send OpenT</h5>
+                    </div>
+                    <div class="card-body">
+                        <form id="sendForm">
+                            <div class="mb-3">
+                                <label class="form-label">Recipient Address</label>
+                                <input type="text" class="form-control" id="recipientAddress" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Amount (OpenT)</label>
+                                <input type="number" class="form-control" id="sendAmount" min="0.000001" step="0.000001" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Send OpenT</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                        <h5 class="card-title mb-0">Transaction History</h5>
+                        <div class="btn-group">
+                            <button class="btn btn-outline-light active" data-filter="all">All</button>
+                            <button class="btn btn-outline-light" data-filter="sent">Sent</button>
+                            <button class="btn btn-outline-light" data-filter="received">Received</button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Type</th>
+                                        <th>Amount</th>
+                                        <th>From/To</th>
+                                        <th>Status</th>
+                                        <th>Hash</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transactionHistory">
+                                    <!-- Transactions will be populated here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Wallet Modal -->
+    <div class="modal fade" id="createWalletModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Create New Wallet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning">
+                        <strong>Important:</strong> Save your private key securely. It cannot be recovered if lost!
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Private Key</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="privateKey" readonly>
+                            <button class="btn btn-outline-secondary" id="copyPrivateKeyBtn">Copy</button>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Wallet Address</label>
+                        <input type="text" class="form-control" id="newWalletAddress" readonly>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="saveWalletBtn">Save Wallet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Access Modal -->
+    <div class="modal fade" id="quickAccessModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">Quick Access - Your Wallet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        This will load your wallet with address:<br>
+                        <strong>0xB4844D547E444d340315A36fdAB4c5cd5259063C</strong>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Enter Private Key</label>
+                        <div class="input-group">
+                            <input type="password" class="form-control" id="quickAccessPrivateKey" placeholder="Enter your private key">
+                            <button class="btn btn-outline-secondary" type="button" id="togglePrivateKey">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="confirmQuickAccess">Access Wallet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+    <script src="wallet.js"></script>
+</body>
+</html> 

@@ -1,266 +1,197 @@
-# OpenChain
+# OpenChain Blockchain Platform
 
-An educational blockchain simulation platform designed to demonstrate blockchain concepts and mechanisms in real-time.
+OpenChain is a modular blockchain simulation platform with smart contract functionality, designed for educational and demonstration purposes.
 
 ## Features
 
-- Real-time blockchain simulation
-- Interactive block explorer
-- Admin control panel
-- Network scenario simulations
-- Educational tooltips and explanations
-- Performance monitoring and visualization
+- Full blockchain implementation with blocks, transactions, and mining
+- Smart contract platform with JavaScript-based contracts
+- Built-in stablecoin (opUSD) implementation
+- Multi-node network simulation
+- Web-based blockchain explorer
+- REST API for blockchain interaction
+- Wallet functionality
 
-## Technology Stack
-
-- Node.js (v16+)
-- TypeScript
-- WebSocket for real-time updates
-- Chart.js for visualizations
-- AWS deployment support
-
-## Local Development Setup
-
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/openchain.git
-cd openchain
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Create a .env file:
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
-
-4. Start the development server:
-```bash
-npm run dev
-```
-
-5. Access the application:
-- Block Explorer: http://localhost:8080
-- Admin Panel: http://localhost:8080/admin.html
-
-## Production Deployment
+## Getting Started
 
 ### Prerequisites
 
-1. Install AWS CLI:
+- Node.js 16+
+- npm or yarn
+
+### Local Installation
+
 ```bash
-# Windows (using PowerShell as Administrator)
-msiexec.exe /i https://awscli.amazonaws.com/AWSCLIV2.msi
+# Clone the repository
+git clone https://github.com/o-c-foundation/OpenChain.v1.05.01.git
+cd OpenChain.v1.05.01
 
-# Mac
-brew install awscli
+# Install dependencies
+npm install
 
-# Linux
-curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-unzip awscliv2.zip
-sudo ./aws/install
+# Start the application
+npm start
 ```
 
-2. Configure AWS credentials:
-```bash
-aws configure
-```
+The application will be available at http://localhost:3000
 
-3. Deploy to AWS:
-```bash
-npm run aws:deploy
-```
+### AWS Deployment
 
-## Admin Access
-
-Default admin credentials (change in production):
-- Username: admin
-- Password: openchain
-
-## Available Scripts
-
-- `npm run dev` - Start development server
-- `npm run build` - Build for production
-- `npm start` - Start production server
-- `npm test` - Run tests
-- `npm run lint` - Run linting
-- `npm run format` - Format code
-- `npm run aws:init` - Initialize AWS environment
-- `npm run aws:deploy` - Deploy to AWS
+This repository includes AWS CodeDeploy configuration for easy deployment to EC2 instances. See [AWS-CODEDEPLOY.md](AWS-CODEDEPLOY.md) for detailed instructions.
 
 ## Project Structure
 
 ```
-openchain/
-├── src/
-│   ├── blockchain/    # Core blockchain implementation
-│   ├── simulation/    # Simulation logic
-│   ├── api/          # REST API endpoints
-│   └── websocket/    # WebSocket handlers
-├── public/           # Static files
-├── config/          # Configuration files
-├── tests/           # Test files
-└── .ebextensions/   # AWS configuration
+├── contracts/            # Smart contract examples
+│   └── opUSD.js          # Stablecoin contract implementation
+├── deploy/               # Deployment TypeScript sources
+│   └── src/              # Core blockchain implementation (TS)
+├── public/               # Static web assets
+├── scripts/              # Deployment scripts
+├── src/                  # JavaScript implementation
+├── appspec.yml           # AWS CodeDeploy configuration
+├── server.js             # Main server entry point
+└── package.json          # Project dependencies
 ```
+
+## API Documentation
+
+### Blockchain API
+
+- `GET /info` - Get blockchain information
+- `GET /blocks` - List blockchain blocks
+- `GET /block/:id` - Get block details
+- `GET /transactions` - List transactions
+- `GET /transaction/:id` - Get transaction details
+- `GET /address/:address` - Get address information
+
+### Contract API
+
+- `POST /contracts/deploy` - Deploy a smart contract
+- `POST /contracts/execute` - Execute a contract method
+- `POST /contracts/call` - Call a contract method (read-only)
+
+## Testing
+
+To test the stablecoin contract:
+
+```bash
+npm run test-opusd
+```
+
+## Deployment
+
+The simplest way to deploy OpenChain is using the provided AWS deployment scripts:
+
+```bash
+# Deploy to a single node
+node deploy-opusd.js
+```
+
+For multi-node deployments, see the AWS CodeDeploy instructions.
+
+## License
+
+MIT
 
 ## Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-## License
+# opUSD Stablecoin for OpenChain
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+A $1.00 USD-pegged stablecoin implementation for the OpenChain blockchain.
 
-## Deployment Guide
+## Overview
 
-### Prerequisites
-- Node.js v14+ and npm
-- MongoDB (for blockchain data storage)
-- SSL certificate (for production deployment)
+This project implements a USD-pegged stablecoin called opUSD on the OpenChain blockchain. The stablecoin maintains a fixed value of $1.00 USD and provides standard ERC-20 compatible functionality.
 
-### Local Development
-1. Install dependencies:
+## Prerequisites
+
+- Node.js (v14 or higher)
+- npm
+- Running OpenChain node (localhost:3000)
+
+## Installation
+
+1. Clone the repository:
 ```bash
-npm install
+git clone https://github.com/yourusername/openchain-stablecoin.git
+cd openchain-stablecoin
 ```
-
-2. Set up environment variables:
-```bash
-cp .env.example .env
-# Edit .env with your configuration
-```
-
-3. Start the development server:
-```bash
-npm run dev
-```
-
-### Production Deployment
-
-#### Option 1: AWS Deployment
-1. Set up an EC2 instance:
-   - Use t2.medium or higher
-   - Ubuntu Server 20.04 LTS
-   - Configure security groups for ports 80, 443, and 3000
 
 2. Install dependencies:
 ```bash
-sudo apt update
-sudo apt install nodejs npm mongodb nginx
-```
-
-3. Configure Nginx:
-```bash
-sudo nano /etc/nginx/sites-available/openchain
-```
-Add the following configuration:
-```nginx
-server {
-    listen 80;
-    server_name your-domain.com;
-
-    location / {
-        proxy_pass http://localhost:3000;
-        proxy_http_version 1.1;
-        proxy_set_header Upgrade $http_upgrade;
-        proxy_set_header Connection 'upgrade';
-        proxy_set_header Host $host;
-        proxy_cache_bypass $http_upgrade;
-    }
-}
-```
-
-4. Enable the site:
-```bash
-sudo ln -s /etc/nginx/sites-available/openchain /etc/nginx/sites-enabled/
-sudo systemctl restart nginx
-```
-
-5. Set up SSL with Let's Encrypt:
-```bash
-sudo apt install certbot python3-certbot-nginx
-sudo certbot --nginx -d your-domain.com
-```
-
-6. Deploy the application:
-```bash
-git clone https://github.com/yourusername/openchain.git
-cd openchain
 npm install
-npm run build
+```
+
+## Getting Started
+
+### Deploying the opUSD Contract
+
+1. Make sure your OpenChain node is running:
+```bash
 npm start
 ```
 
-7. Set up PM2 for process management:
+2. Deploy the opUSD contract:
 ```bash
-npm install -g pm2
-pm2 start dist/index.js --name openchain
-pm2 startup
-pm2 save
+npm run deploy-opusd
 ```
 
-#### Option 2: Docker Deployment
-1. Build the Docker image:
+This will:
+- Deploy the opUSD contract to the blockchain
+- Initialize it with an initial supply of 1,000,000 tokens
+- Save the contract details to `opusd-contract-info.json`
+
+### Testing the opUSD Contract
+
+Run the test script to verify the contract works correctly:
+
 ```bash
-docker build -t openchain .
+npm run test-opusd
 ```
 
-2. Run with Docker Compose:
-```bash
-docker-compose up -d
-```
+The test script demonstrates:
+- Checking token details
+- Checking wallet balances
+- Transferring tokens between wallets
+- Minting new tokens (owner only)
+- Burning tokens (owner only)
 
-### Monitoring and Maintenance
-- Monitor system health using the built-in dashboard at `/dashboard`
-- View network simulation at `/simulation`
-- Access block explorer at `/explorer`
-- Check wallet interface at `/wallet`
+## Contract Functions
 
-### Security Considerations
-- Keep MongoDB secure and regularly backed up
-- Rotate API keys and secrets regularly
-- Monitor system resources and set up alerts
-- Keep all dependencies updated
-- Enable rate limiting for API endpoints
-- Set up DDoS protection
+### User Functions
 
-### Troubleshooting
-Common issues and solutions:
-1. WebSocket Connection Failed:
-   - Check firewall settings
-   - Verify correct port configuration
-   - Ensure SSL is properly set up
+- `transfer(to, amount)` - Send tokens to another wallet
+- `balanceOf(address)` - Check the balance of an address
+- `approve(spender, amount)` - Allow another address to spend your tokens
+- `transferFrom(from, to, amount)` - Transfer tokens as an approved spender
 
-2. Performance Issues:
-   - Monitor system resources
-   - Check MongoDB indexes
-   - Verify network connectivity
-   - Optimize blockchain data storage
+### Admin Functions (Owner Only)
 
-3. Simulation Not Working:
-   - Check WebSocket connection
-   - Verify browser compatibility
-   - Clear browser cache
-   - Check console for errors
+- `mint(to, amount)` - Create new tokens
+- `burn(from, amount)` - Destroy tokens
+- `pause()` - Pause the contract in case of emergency
+- `unpause()` - Resume contract operations
+- `transferOwnership(newOwner)` - Transfer contract control
 
-For more detailed troubleshooting, check the logs:
-```bash
-pm2 logs openchain
-```
+## Contract Security
 
-### Support and Updates
-- Report issues on GitHub
-- Check for updates regularly
-- Subscribe to security notifications
-- Join the community forum for support
+The opUSD contract includes several security features:
+- Controlled token supply (only owner can mint/burn)
+- Emergency pause functionality
+- Input validation and error handling
+- Balance checking to prevent unauthorized spending
+
+## Technical Details
+
+The opUSD token has the following properties:
+- Name: OpenChain USD
+- Symbol: opUSD
+- Decimals: 18
+- Fixed price: $1.00 USD
 
 ## License
-MIT License - See LICENSE file for details 
+
+This project is licensed under the MIT License - see the LICENSE file for details. 

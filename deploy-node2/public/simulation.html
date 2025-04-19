@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenChain Network Simulator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vis-network/9.1.2/vis-network.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-brand">OpenChain Simulator</div>
+        <div class="navbar-menu">
+            <a href="#" class="active">Network View</a>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="wallet.html">Wallet</a>
+            <a href="index.html">Explorer</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Network Visualization</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="network-container" style="height: 500px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Simulation Controls</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="scenario-select">Select Scenario:</label>
+                            <select id="scenario-select" class="form-control">
+                                <option value="network_growth">Network Growth</option>
+                                <option value="network_partition">Network Partition</option>
+                                <option value="transaction_propagation">Transaction Propagation</option>
+                                <option value="mining_competition">Mining Competition</option>
+                                <option value="chain_reorganization">Chain Reorganization</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <button id="start-simulation" class="btn btn-primary">Start Simulation</button>
+                            <button id="reset-simulation" class="btn btn-secondary">Reset</button>
+                        </div>
+                        <div id="simulation-info" class="info-box">
+                            <h3>Scenario Information</h3>
+                            <div id="scenario-description"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h2>Network Statistics</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-container">
+                            <div class="stat-item">
+                                <label>Total Nodes:</label>
+                                <span id="total-nodes">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <label>Active Connections:</label>
+                                <span id="active-connections">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <label>Average Latency:</label>
+                                <span id="avg-latency">0 ms</span>
+                            </div>
+                            <div class="stat-item">
+                                <label>Network Health:</label>
+                                <span id="network-health" class="badge badge-success">Good</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Educational Insights</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="educational-content">
+                            <div class="tooltip-container">
+                                <h4>Current Learning Points:</h4>
+                                <ul id="learning-points"></ul>
+                            </div>
+                            <div class="concept-explanation">
+                                <h4>Key Concepts:</h4>
+                                <div id="concept-details"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="simulation.js"></script>
+</body>
+</html> 
