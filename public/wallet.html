@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenChain Wallet</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">OpenChain Wallet</div>
+        <div class="nav-links">
+            <a href="#" class="active">Wallet</a>
+            <a href="#">Transactions</a>
+            <a href="#">Mining</a>
+            <a href="#">Settings</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Wallet Overview -->
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <h3>Wallet Overview</h3>
+                    <div class="wallet-info">
+                        <div class="wallet-address">
+                            <span class="label">Address:</span>
+                            <span id="wallet-address" class="monospace"></span>
+                            <button id="copy-address" class="btn-small">Copy</button>
+                        </div>
+                        <div class="wallet-balance">
+                            <span class="label">Balance:</span>
+                            <span id="wallet-balance" class="amount">0</span>
+                            <span class="currency">OpenT</span>
+                        </div>
+                    </div>
+                    <div class="wallet-actions">
+                        <button id="create-wallet" class="btn-primary">Create New Wallet</button>
+                        <button id="import-wallet" class="btn-secondary">Import Wallet</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Send/Receive -->
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <h3>Send OpenT</h3>
+                    <form id="send-form">
+                        <div class="form-group">
+                            <label for="recipient">Recipient Address</label>
+                            <input type="text" id="recipient" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Amount</label>
+                            <input type="number" id="amount" class="form-control" required>
+                        </div>
+                        <button type="submit" class="btn-primary">Send</button>
+                    </form>
+                </div>
+            </div>
+            <div class="col">
+                <div class="card">
+                    <h3>Receive OpenT</h3>
+                    <div class="qr-code" id="qr-code">
+                        <!-- QR code will be generated here -->
+                    </div>
+                    <div class="receive-address">
+                        <span class="label">Your Address:</span>
+                        <span id="receive-address" class="monospace"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transaction History -->
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <h3>Transaction History</h3>
+                    <div class="transaction-filters">
+                        <select id="transaction-type">
+                            <option value="all">All Transactions</option>
+                            <option value="sent">Sent</option>
+                            <option value="received">Received</option>
+                            <option value="mining">Mining Rewards</option>
+                        </select>
+                        <input type="date" id="transaction-date" class="form-control">
+                    </div>
+                    <div class="transaction-list" id="transaction-list">
+                        <!-- Transactions will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mining Interface -->
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <h3>Mining</h3>
+                    <div class="mining-info">
+                        <div class="mining-stats">
+                            <div class="stat">
+                                <span class="label">Hash Rate</span>
+                                <span id="hash-rate" class="value">0 H/s</span>
+                            </div>
+                            <div class="stat">
+                                <span class="label">Blocks Mined</span>
+                                <span id="blocks-mined" class="value">0</span>
+                            </div>
+                            <div class="stat">
+                                <span class="label">Total Rewards</span>
+                                <span id="mining-rewards" class="value">0 OpenT</span>
+                            </div>
+                        </div>
+                        <div class="mining-controls">
+                            <button id="start-mining" class="btn-primary">Start Mining</button>
+                            <button id="stop-mining" class="btn-danger" disabled>Stop Mining</button>
+                        </div>
+                    </div>
+                    <div class="mining-log" id="mining-log">
+                        <!-- Mining logs will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Settings -->
+        <div class="row">
+            <div class="col">
+                <div class="card">
+                    <h3>Security Settings</h3>
+                    <div class="security-settings">
+                        <div class="setting">
+                            <label for="auto-lock">Auto-lock after inactivity</label>
+                            <select id="auto-lock">
+                                <option value="0">Never</option>
+                                <option value="5">5 minutes</option>
+                                <option value="15">15 minutes</option>
+                                <option value="30">30 minutes</option>
+                                <option value="60">1 hour</option>
+                            </select>
+                        </div>
+                        <div class="setting">
+                            <label for="password">Change Password</label>
+                            <input type="password" id="password" class="form-control">
+                            <button id="change-password" class="btn-secondary">Update</button>
+                        </div>
+                        <div class="setting">
+                            <label for="backup">Backup Wallet</label>
+                            <button id="backup-wallet" class="btn-secondary">Download Backup</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="create-wallet-modal" class="modal">
+        <div class="modal-content">
+            <h3>Create New Wallet</h3>
+            <div class="wallet-backup">
+                <p class="warning">IMPORTANT: Save your private key securely!</p>
+                <div class="private-key">
+                    <span id="new-private-key" class="monospace"></span>
+                    <button id="copy-private-key" class="btn-small">Copy</button>
+                </div>
+                <button id="download-backup" class="btn-primary">Download Backup File</button>
+            </div>
+            <div class="modal-actions">
+                <button id="close-modal" class="btn-secondary">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="import-wallet-modal" class="modal">
+        <div class="modal-content">
+            <h3>Import Wallet</h3>
+            <form id="import-form">
+                <div class="form-group">
+                    <label for="private-key">Private Key</label>
+                    <input type="text" id="private-key" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="wallet-name">Wallet Name (optional)</label>
+                    <input type="text" id="wallet-name" class="form-control">
+                </div>
+                <button type="submit" class="btn-primary">Import</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="wallet.js"></script>
+</body>
+</html> 
