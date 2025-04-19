@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/openchain
+    depends_on:
+      - mongodb
+    restart: always
+    networks:
+      - openchain-network
+
+  mongodb:
+    image: mongo:latest
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    networks:
+      - openchain-network
+
+networks:
+  openchain-network:
+    driver: bridge
+
+volumes:
+  mongodb_data: 

@@ -1,164 +1,245 @@
 import { Block } from './block';
-import { Transaction } from './transaction';
+import { Transaction, TransactionData } from './transaction';
 import { SmartContract } from './smart-contract';
-import { Wallet } from './wallet';
+import { EventEmitter } from 'events';
 
-export class Blockchain {
+export class BlockchainError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'BlockchainError';
+    }
+}
+
+export class Blockchain extends EventEmitter {
     private chain: Block[];
     private pendingTransactions: Transaction[];
-    private smartContracts: Map<string, SmartContract>;
-    private readonly miningReward: number;
-    private readonly maxSupply: number;
-    private readonly initialSupply: number;
-    private totalMined: number;
-    private readonly founderWallet: Wallet;
+    private contracts: Map<string, SmartContract>;
+    private difficulty: number;
+    private miningReward: number;
+    private maxSupply: number;
+    private circulatingSupply: number;
 
     constructor() {
+        super();
         this.chain = [this.createGenesisBlock()];
         this.pendingTransactions = [];
-        this.smartContracts = new Map();
-        this.miningReward = 1; // 1 OpenT per block
-        this.maxSupply = 100000000; // 100M OpenT
-        this.initialSupply = 10000000; // 10M OpenT
-        this.totalMined = 0;
-        
-        // Create founder wallet and distribute initial supply
-        this.founderWallet = new Wallet();
-        this.distributeInitialSupply();
+        this.contracts = new Map();
+        this.difficulty = 4;
+        this.miningReward = 50;
+        this.maxSupply = 100000000; // 100 million coins
+        this.circulatingSupply = 0;
+        this.initializeGenesisDistribution();
     }
 
     private createGenesisBlock(): Block {
-        return new Block(0, Date.now(), [], '0');
+        return new Block(
+            "0",
+            [],
+            Date.now(),
+            0,
+            this.difficulty
+        );
     }
 
-    private distributeInitialSupply(): void {
-        // Create a special transaction for the initial supply
+    private initializeGenesisDistribution(): void {
         const genesisTransaction = new Transaction({
             from: '0x0000000000000000000000000000000000000000', // System address
-            to: this.founderWallet.address,
-            amount: this.initialSupply,
+            to: '0x1000000000000000000000000000000000000000', // Initial distribution address
+            amount: 10000000, // 10 million coins
+            timestamp: Date.now(),
+            nonce: 0,
             data: { type: 'initial_distribution' }
         });
 
-        // Add to pending transactions
         this.pendingTransactions.push(genesisTransaction);
-        
-        // Update founder's balance
-        this.founderWallet.updateBalance(this.initialSupply);
-        
-        // Update total mined
-        this.totalMined += this.initialSupply;
+        this.circulatingSupply += genesisTransaction.data.amount;
     }
 
     public getLatestBlock(): Block {
         return this.chain[this.chain.length - 1];
     }
 
+    public getHeight(): number {
+        return this.chain.length - 1;
+    }
+
+    public getDifficulty(): number {
+        return this.difficulty;
+    }
+
     public addBlock(block: Block): void {
-        // Verify block
-        if (!this.isValidBlock(block)) {
-            throw new Error('Invalid block');
+        if (!this.isValidNewBlock(block)) {
+            throw new BlockchainError('Invalid block');
         }
-
-        // Check mining limit
-        if (this.totalMined + this.miningReward > this.maxSupply) {
-            throw new Error('Mining limit reached');
-        }
-
-        // Add block to chain
-        this.chain.push(block);
 
         // Process transactions
         for (const transaction of block.transactions) {
             this.processTransaction(transaction);
         }
 
+        this.chain.push(block);
+        this.emit('block:added', block);
+
+        // Adjust difficulty every 10 blocks
+        if (this.chain.length % 10 === 0) {
+            this.adjustDifficulty();
+        }
+
         // Add mining reward
-        this.totalMined += this.miningReward;
-    }
-
-    private processTransaction(transaction: Transaction): void {
-        // Update balances
-        if (transaction.data.from !== '0x0000000000000000000000000000000000000000') {
-            const fromWallet = this.getWalletByAddress(transaction.data.from);
-            if (fromWallet) {
-                fromWallet.updateBalance(-transaction.data.amount);
-            }
-        }
-
-        const toWallet = this.getWalletByAddress(transaction.data.to);
-        if (toWallet) {
-            toWallet.updateBalance(transaction.data.amount);
-        }
-    }
-
-    public minePendingTransactions(minerAddress: string): void {
-        // Create new block with pending transactions
-        const block = new Block(
-            this.chain.length,
-            Date.now(),
-            this.pendingTransactions,
-            this.getLatestBlock().hash
-        );
-
-        // Add mining reward transaction
         const rewardTransaction = new Transaction({
             from: '0x0000000000000000000000000000000000000000',
-            to: minerAddress,
+            to: block.transactions[0].data.from, // Miner's address
             amount: this.miningReward,
+            timestamp: Date.now(),
+            nonce: 0,
             data: { type: 'mining_reward' }
         });
 
-        block.addTransaction(rewardTransaction);
-
-        // Add block to chain
-        this.addBlock(block);
-
-        // Clear pending transactions
-        this.pendingTransactions = [];
+        this.pendingTransactions.push(rewardTransaction);
+        this.circulatingSupply += this.miningReward;
     }
 
-    public getBalance(address: string): number {
-        const wallet = this.getWalletByAddress(address);
-        return wallet ? wallet.getBalance() : 0;
-    }
-
-    public getTotalSupply(): number {
-        return this.totalMined;
-    }
-
-    public getRemainingSupply(): number {
-        return this.maxSupply - this.totalMined;
-    }
-
-    public getFounderAddress(): string {
-        return this.founderWallet.address;
-    }
-
-    private getWalletByAddress(address: string): Wallet | undefined {
-        // In a real implementation, this would look up the wallet in a database
-        // For this example, we'll just return the founder wallet if the address matches
-        return address === this.founderWallet.address ? this.founderWallet : undefined;
-    }
-
-    private isValidBlock(block: Block): boolean {
+    private isValidNewBlock(block: Block): boolean {
         const previousBlock = this.getLatestBlock();
-        
-        // Check block hash
-        if (block.hash !== block.calculateHash()) {
+
+        if (block.height !== this.getHeight() + 1) {
             return false;
         }
 
-        // Check previous block hash
         if (block.previousHash !== previousBlock.hash) {
             return false;
         }
 
-        // Check block index
-        if (block.index !== previousBlock.index + 1) {
+        if (!block.isValid()) {
             return false;
         }
 
         return true;
+    }
+
+    private processTransaction(transaction: Transaction): void {
+        if (!transaction.verifySignature()) {
+            throw new BlockchainError('Invalid transaction signature');
+        }
+
+        // Handle contract transactions
+        if (transaction.data.data?.type === 'contract_deployment') {
+            this.deployContract(transaction);
+        } else if (transaction.data.data?.type === 'contract_interaction') {
+            this.executeContract(transaction);
+        }
+    }
+
+    private deployContract(transaction: Transaction): void {
+        const contract = new SmartContract(
+            transaction.data.data.code,
+            transaction.data.from
+        );
+        this.contracts.set(contract.address, contract);
+        this.emit('contract:deployed', contract);
+    }
+
+    private executeContract(transaction: Transaction): void {
+        const contract = this.contracts.get(transaction.data.to);
+        if (!contract) {
+            throw new BlockchainError('Contract not found');
+        }
+
+        contract.execute(
+            transaction.data.data.method,
+            transaction.data.data.params,
+            transaction.data.from,
+            transaction.data.amount,
+            this.getHeight()
+        );
+    }
+
+    private adjustDifficulty(): void {
+        const lastTenBlocks = this.chain.slice(-10);
+        const averageTime = lastTenBlocks.reduce((sum, block, i) => {
+            if (i === 0) return 0;
+            return sum + (block.timestamp - lastTenBlocks[i - 1].timestamp);
+        }, 0) / 9;
+
+        // Target block time is 5 seconds
+        if (averageTime < 4000) { // Too fast
+            this.difficulty++;
+        } else if (averageTime > 6000) { // Too slow
+            this.difficulty = Math.max(1, this.difficulty - 1);
+        }
+    }
+
+    public addTransaction(transaction: Transaction): void {
+        if (!transaction.verifySignature()) {
+            throw new BlockchainError('Invalid transaction signature');
+        }
+
+        this.pendingTransactions.push(transaction);
+        this.emit('transaction:added', transaction);
+    }
+
+    public getPendingTransactions(): Transaction[] {
+        return [...this.pendingTransactions];
+    }
+
+    public getBalance(address: string): number {
+        let balance = 0;
+
+        // Check all blocks
+        for (const block of this.chain) {
+            for (const transaction of block.transactions) {
+                if (transaction.data.from === address) {
+                    balance -= transaction.data.amount;
+                    balance -= transaction.getFee();
+                }
+                if (transaction.data.to === address) {
+                    balance += transaction.data.amount;
+                }
+            }
+        }
+
+        // Check pending transactions
+        for (const transaction of this.pendingTransactions) {
+            if (transaction.data.from === address) {
+                balance -= transaction.data.amount;
+                balance -= transaction.getFee();
+            }
+            if (transaction.data.to === address) {
+                balance += transaction.data.amount;
+            }
+        }
+
+        return balance;
+    }
+
+    public getContract(address: string): SmartContract | undefined {
+        return this.contracts.get(address);
+    }
+
+    public isValidChain(): boolean {
+        for (let i = 1; i < this.chain.length; i++) {
+            const currentBlock = this.chain[i];
+            const previousBlock = this.chain[i - 1];
+
+            if (!currentBlock.isValid()) {
+                return false;
+            }
+
+            if (currentBlock.previousHash !== previousBlock.hash) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public getStats(): any {
+        return {
+            height: this.getHeight(),
+            difficulty: this.difficulty,
+            circulatingSupply: this.circulatingSupply,
+            maxSupply: this.maxSupply,
+            pendingTransactions: this.pendingTransactions.length,
+            contracts: this.contracts.size
+        };
     }
 } 

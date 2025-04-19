@@ -32,10 +32,10 @@ export interface TransactionData {
 }
 
 export class Transaction {
-    public readonly hash: string;
-    public readonly data: TransactionData;
     public readonly id: string;
+    public readonly data: TransactionData;
     private signature?: string;
+    private _size: number;
     private status: TransactionStatus;
 
     constructor(data: TransactionData, signature?: string) {
@@ -45,41 +45,36 @@ export class Transaction {
             timestamp: data.timestamp || Date.now(),
             nonce: data.nonce || Math.floor(Math.random() * 1000000)
         };
-        this.hash = this.calculateHash();
-        this.id = this.hash;
+        this.id = this.calculateHash();
         this.status = TransactionStatus.PENDING;
         if (signature) {
             this.signature = signature;
         }
+        this._size = this.calculateSize();
     }
 
-    private validateTransactionData(data: TransactionData): void {
-        if (!data.from || !data.to) {
-            throw new TransactionError('Invalid addresses');
+    public get size(): number {
+        return this._size;
+    }
+
+    private calculateSize(): number {
+        const size = Buffer.from(JSON.stringify(this)).length;
+        if (size > MAX_TRANSACTION_SIZE) {
+            throw new TransactionError(`Transaction size ${size} exceeds maximum allowed size ${MAX_TRANSACTION_SIZE}`);
         }
-        if (data.amount < MIN_AMOUNT) {
-            throw new TransactionError(`Amount must be at least ${MIN_AMOUNT}`);
-        }
-        if (data.from === data.to) {
-            throw new TransactionError('Sender and receiver cannot be the same');
-        }
-        if (data.gasLimit && data.gasLimit < 0) {
-            throw new TransactionError('Gas limit must be positive');
-        }
-        if (data.gasPrice && data.gasPrice < 0) {
-            throw new TransactionError('Gas price must be positive');
-        }
+        return size;
     }
 
     public calculateHash(): string {
-        const dataToHash = {
-            ...this.data,
+        const data = JSON.stringify({
+            from: this.data.from,
+            to: this.data.to,
+            amount: this.data.amount,
             timestamp: this.data.timestamp,
-            nonce: this.data.nonce
-        };
-        return createHash('sha256')
-            .update(JSON.stringify(dataToHash))
-            .digest('hex');
+            nonce: this.data.nonce,
+            data: this.data.data
+        });
+        return createHash('sha256').update(data).digest('hex');
     }
 
     public sign(signature: string): void {
@@ -111,14 +106,6 @@ export class Transaction {
         }
     }
 
-    public getSize(): number {
-        const size = Buffer.from(JSON.stringify(this)).length;
-        if (size > MAX_TRANSACTION_SIZE) {
-            throw new TransactionError(`Transaction size ${size} exceeds maximum allowed size ${MAX_TRANSACTION_SIZE}`);
-        }
-        return size;
-    }
-
     public getFee(): number {
         if (!this.data.gasLimit || !this.data.gasPrice) {
             return 0;
@@ -143,7 +130,7 @@ export class Transaction {
         gasPrice?: number
     ): Transaction {
         const transactionData: TransactionData = {
-            from: fromWallet.getAddress(),
+            from: fromWallet.address,
             to,
             amount,
             timestamp: Date.now(),
@@ -154,7 +141,7 @@ export class Transaction {
         };
 
         const transaction = new Transaction(transactionData);
-        const signature = this.signTransaction(transactionData, fromWallet);
+        const signature = Transaction.signTransaction(transactionData, fromWallet);
         transaction.sign(signature);
         return transaction;
     }
@@ -164,7 +151,7 @@ export class Transaction {
         wallet: Wallet
     ): string {
         try {
-            const key = EC.keyFromPrivate(wallet.getPrivateKey());
+            const key = EC.keyFromPrivate(wallet.exportPrivateKey());
             const hash = createHash('sha256')
                 .update(JSON.stringify(data))
                 .digest();
@@ -172,7 +159,7 @@ export class Transaction {
             const signature = key.sign(hash);
             return signature.toDER('hex');
         } catch (error) {
-            throw new TransactionError(`Failed to sign transaction: ${error.message}`);
+            throw new TransactionError(`Failed to sign transaction: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
     }
 
@@ -181,6 +168,7 @@ export class Transaction {
             id: this.id,
             data: this.data,
             signature: this.signature,
+            size: this.size,
             status: this.status
         };
     }
@@ -192,5 +180,23 @@ export class Transaction {
         const transaction = new Transaction(json.data, json.signature);
         transaction.setStatus(json.status || TransactionStatus.PENDING);
         return transaction;
+    }
+
+    private validateTransactionData(data: TransactionData): void {
+        if (!data.from || !data.to) {
+            throw new TransactionError('Invalid addresses');
+        }
+        if (data.amount < MIN_AMOUNT) {
+            throw new TransactionError(`Amount must be at least ${MIN_AMOUNT}`);
+        }
+        if (data.from === data.to) {
+            throw new TransactionError('Sender and receiver cannot be the same');
+        }
+        if (data.gasLimit && data.gasLimit < 0) {
+            throw new TransactionError('Gas limit must be positive');
+        }
+        if (data.gasPrice && data.gasPrice < 0) {
+            throw new TransactionError('Gas price must be positive');
+        }
     }
 } 

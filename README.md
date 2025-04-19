@@ -117,4 +117,150 @@ openchain/
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Deployment Guide
+
+### Prerequisites
+- Node.js v14+ and npm
+- MongoDB (for blockchain data storage)
+- SSL certificate (for production deployment)
+
+### Local Development
+1. Install dependencies:
+```bash
+npm install
+```
+
+2. Set up environment variables:
+```bash
+cp .env.example .env
+# Edit .env with your configuration
+```
+
+3. Start the development server:
+```bash
+npm run dev
+```
+
+### Production Deployment
+
+#### Option 1: AWS Deployment
+1. Set up an EC2 instance:
+   - Use t2.medium or higher
+   - Ubuntu Server 20.04 LTS
+   - Configure security groups for ports 80, 443, and 3000
+
+2. Install dependencies:
+```bash
+sudo apt update
+sudo apt install nodejs npm mongodb nginx
+```
+
+3. Configure Nginx:
+```bash
+sudo nano /etc/nginx/sites-available/openchain
+```
+Add the following configuration:
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+```
+
+4. Enable the site:
+```bash
+sudo ln -s /etc/nginx/sites-available/openchain /etc/nginx/sites-enabled/
+sudo systemctl restart nginx
+```
+
+5. Set up SSL with Let's Encrypt:
+```bash
+sudo apt install certbot python3-certbot-nginx
+sudo certbot --nginx -d your-domain.com
+```
+
+6. Deploy the application:
+```bash
+git clone https://github.com/yourusername/openchain.git
+cd openchain
+npm install
+npm run build
+npm start
+```
+
+7. Set up PM2 for process management:
+```bash
+npm install -g pm2
+pm2 start dist/index.js --name openchain
+pm2 startup
+pm2 save
+```
+
+#### Option 2: Docker Deployment
+1. Build the Docker image:
+```bash
+docker build -t openchain .
+```
+
+2. Run with Docker Compose:
+```bash
+docker-compose up -d
+```
+
+### Monitoring and Maintenance
+- Monitor system health using the built-in dashboard at `/dashboard`
+- View network simulation at `/simulation`
+- Access block explorer at `/explorer`
+- Check wallet interface at `/wallet`
+
+### Security Considerations
+- Keep MongoDB secure and regularly backed up
+- Rotate API keys and secrets regularly
+- Monitor system resources and set up alerts
+- Keep all dependencies updated
+- Enable rate limiting for API endpoints
+- Set up DDoS protection
+
+### Troubleshooting
+Common issues and solutions:
+1. WebSocket Connection Failed:
+   - Check firewall settings
+   - Verify correct port configuration
+   - Ensure SSL is properly set up
+
+2. Performance Issues:
+   - Monitor system resources
+   - Check MongoDB indexes
+   - Verify network connectivity
+   - Optimize blockchain data storage
+
+3. Simulation Not Working:
+   - Check WebSocket connection
+   - Verify browser compatibility
+   - Clear browser cache
+   - Check console for errors
+
+For more detailed troubleshooting, check the logs:
+```bash
+pm2 logs openchain
+```
+
+### Support and Updates
+- Report issues on GitHub
+- Check for updates regularly
+- Subscribe to security notifications
+- Join the community forum for support
+
+## License
+MIT License - See LICENSE file for details 
