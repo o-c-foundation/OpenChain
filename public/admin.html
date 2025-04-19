@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenChain Admin Panel</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="admin-styles.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="admin-panel">
+    <nav class="navbar">
+        <div class="nav-brand">OpenChain Admin Panel</div>
+        <div class="admin-controls">
+            <span id="adminStatus" class="admin-status">Not Authenticated</span>
+            <button id="logoutBtn" class="btn btn-danger" style="display: none;">Logout</button>
+        </div>
+    </nav>
+
+    <main>
+        <div id="loginSection" class="card">
+            <h3>Admin Authentication</h3>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Login</button>
+            </form>
+        </div>
+
+        <div id="adminContent" style="display: none;">
+            <div class="grid-container">
+                <!-- Basic Simulation Controls -->
+                <div class="card">
+                    <h3>Basic Controls</h3>
+                    <div class="control-panel">
+                        <button id="startSimulation" class="btn btn-primary">Start Simulation</button>
+                        <button id="stopSimulation" class="btn btn-danger" disabled>Stop Simulation</button>
+                        <button id="resetSimulation" class="btn btn-warning">Reset Simulation</button>
+                    </div>
+                </div>
+
+                <!-- Network Scenarios -->
+                <div class="card">
+                    <h3>Network Scenarios</h3>
+                    <div class="scenario-controls">
+                        <div class="scenario-group">
+                            <label>Network Partition</label>
+                            <button class="btn btn-secondary" onclick="triggerScenario('partition')">Trigger Partition</button>
+                            <div class="tooltip">Simulates network split into two or more parts</div>
+                        </div>
+                        <div class="scenario-group">
+                            <label>Node Failure</label>
+                            <input type="number" id="failureNodes" min="1" max="5" value="1">
+                            <button class="btn btn-secondary" onclick="triggerScenario('nodeFail')">Simulate Failure</button>
+                            <div class="tooltip">Simulates sudden node failures</div>
+                        </div>
+                        <div class="scenario-group">
+                            <label>Byzantine Behavior</label>
+                            <button class="btn btn-secondary" onclick="triggerScenario('byzantine')">Trigger Byzantine</button>
+                            <div class="tooltip">Simulates malicious node behavior</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Configuration -->
+                <div class="card">
+                    <h3>Advanced Configuration</h3>
+                    <div class="config-controls">
+                        <div class="control-group">
+                            <label for="blockTimeInput">Block Time (ms)</label>
+                            <input type="number" id="blockTimeInput" min="1000" step="1000" value="5000">
+                            <div class="tooltip">Time between blocks in milliseconds</div>
+                        </div>
+                        <div class="control-group">
+                            <label for="latencyInput">Network Latency (ms)</label>
+                            <input type="number" id="latencyInput" min="0" step="50" value="200">
+                            <div class="tooltip">Simulated network delay</div>
+                        </div>
+                        <div class="control-group">
+                            <label for="errorRateInput">Error Rate (%)</label>
+                            <input type="number" id="errorRateInput" min="0" max="100" step="1" value="5">
+                            <div class="tooltip">Percentage of transactions that may fail</div>
+                        </div>
+                        <div class="control-group">
+                            <label for="nodeCountInput">Active Nodes</label>
+                            <input type="number" id="nodeCountInput" min="3" max="10" value="5">
+                            <div class="tooltip">Number of active nodes in the network</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Monitoring -->
+                <div class="card chart-card">
+                    <h3>Network Performance</h3>
+                    <div class="chart-container">
+                        <canvas id="networkChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Node Status -->
+                <div class="card">
+                    <h3>Node Status</h3>
+                    <div id="nodeGrid" class="node-grid"></div>
+                </div>
+
+                <!-- Event Log -->
+                <div class="card">
+                    <h3>Admin Event Log</h3>
+                    <div id="adminEventLog" class="event-log"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="admin.js"></script>
+</body>
+</html> 

@@ -1,0 +1,41 @@
+{
+    "server": {
+        "port": 8080,
+        "host": "0.0.0.0"
+    },
+    "blockchain": {
+        "networkName": "OpenChain",
+        "initialDifficulty": 4,
+        "blockTime": 5000,
+        "maxTransactionsPerBlock": 100,
+        "initialDistribution": 10000000,
+        "maxSupply": 100000000
+    },
+    "simulation": {
+        "enabled": true,
+        "defaultNetworkLatency": 200,
+        "defaultErrorRate": 0.05,
+        "minNodes": 3,
+        "maxNodes": 10,
+        "defaultNodes": 5
+    },
+    "security": {
+        "jwtSecret": "${JWT_SECRET}",
+        "adminUsername": "${ADMIN_USERNAME}",
+        "adminPassword": "${ADMIN_PASSWORD}",
+        "sessionTimeout": 3600
+    },
+    "websocket": {
+        "pingInterval": 30000,
+        "pingTimeout": 5000
+    },
+    "monitoring": {
+        "metricsInterval": 1000,
+        "maxEventLogSize": 1000,
+        "healthCheckInterval": 60000
+    },
+    "aws": {
+        "region": "us-east-1",
+        "s3Bucket": "openchain-data"
+    }
+} 

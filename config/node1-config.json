@@ -1,0 +1,25 @@
+{
+    "nodeId": "node1",
+    "host": "35.171.6.119",
+    "port": 3000,
+    "wsPort": 3001,
+    "peers": [
+        {
+            "host": "52.70.33.81",
+            "port": 3000,
+            "wsPort": 3001
+        },
+        {
+            "host": "98.82.10.184",
+            "port": 3000,
+            "wsPort": 3001
+        }
+    ],
+    "isValidator": true,
+    "validatorKey": "node1_validator",
+    "logLevel": "info",
+    "mining": {
+        "enabled": true,
+        "rewardAddress": "node1_rewards"
+    }
+} 

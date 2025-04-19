@@ -1,212 +1,120 @@
-# OpenChain Network
+# OpenChain
 
-![OpenChain Logo](https://via.placeholder.com/150)
+An educational blockchain simulation platform designed to demonstrate blockchain concepts and mechanisms in real-time.
 
-## Overview
+## Features
 
-OpenChain is a sophisticated blockchain simulation platform developed by the Open Crypto Foundation. It provides a comprehensive environment for blockchain development, testing, and education, featuring a native cryptocurrency (OpenT) and advanced smart contract capabilities.
+- Real-time blockchain simulation
+- Interactive block explorer
+- Admin control panel
+- Network scenario simulations
+- Educational tooltips and explanations
+- Performance monitoring and visualization
 
-## Technical Specifications
+## Technology Stack
 
-### Network Architecture
+- Node.js (v16+)
+- TypeScript
+- WebSocket for real-time updates
+- Chart.js for visualizations
+- AWS deployment support
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                      OpenChain Network                       │
-├───────────────┬───────────────┬───────────────┬─────────────┤
-│  Validator    │  Blockchain   │  Smart        │  Network    │
-│  Node         │  Layer        │  Contracts    │  Monitor    │
-├───────────────┴───────────────┴───────────────┴─────────────┤
-│                      Consensus Layer                        │
-├─────────────────────────────────────────────────────────────┤
-│                      Application Layer                      │
-└─────────────────────────────────────────────────────────────┘
-```
+## Local Development Setup
 
-### Consensus Mechanism
-
-OpenChain implements a Proof-of-Authority (PoA) consensus mechanism with a single validator node responsible for:
-- Transaction validation
-- Block creation and validation
-- Network state maintenance
-- Smart contract execution
-
-### Native Cryptocurrency: OpenT
-
-#### Tokenomics
-- Total Supply: 100,000,000 OpenT
-- Initial Distribution: 10,000,000 OpenT
-- Mining Reward: 50 OpenT per block
-- Block Time: ~10 seconds
-- Mining Difficulty: Adjustable
-
-#### Technical Implementation
-```typescript
-interface OpenTToken {
-    totalSupply: number;
-    circulatingSupply: number;
-    miningReward: number;
-    blockReward: number;
-    transactionFee: number;
-}
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/openchain.git
+cd openchain
 ```
 
-## Core Components
-
-### 1. Validator Node
-- Transaction validation
-- Block creation and validation
-- Network state management
-- Smart contract execution
-- Security monitoring
-
-### 2. Blockchain Layer
-- Distributed ledger implementation
-- Cryptographic hash functions
-- Merkle tree structure
-- Transaction pool management
-- Block propagation
-
-### 3. Smart Contract Engine
-- Turing-complete execution environment
-- Gas-based execution model
-- Event emission system
-- Contract state management
-- Security validations
-
-### 4. Network Monitor
-- Real-time performance metrics
-- Health monitoring
-- Security analysis
-- Resource utilization tracking
-- Alert system
-
-## Technical Features
-
-### Cryptographic Security
-- SHA-256 hashing algorithm
-- ECDSA digital signatures
-- Public-key cryptography
-- Secure key management
-- Transaction signing
-
-### Smart Contract Capabilities
-```solidity
-contract OpenChainContract {
-    event ContractEvent(address indexed from, uint256 value);
-    function execute() public returns (bool) {
-        // Contract logic
-    }
-}
+2. Install dependencies:
+```bash
+npm install
 ```
 
-### Network Protocol
-- WebSocket-based communication
-- RESTful API endpoints
-- Real-time data streaming
-- Secure message passing
-- Peer discovery
-
-## Development Tools
-
-### API Endpoints
-```
-GET    /api/validator/status
-POST   /api/validator/transactions
-POST   /api/validator/blocks
-GET    /api/validator/health
-GET    /api/validator/performance
-GET    /api/validator/security
-GET    /api/validator/alerts
-POST   /api/validator/contracts/validate
-POST   /api/validator/auth/token
+3. Create a .env file:
+```bash
+cp .env.example .env
+# Edit .env with your configuration
 ```
 
-### WebSocket Events
-```typescript
-interface WebSocketEvent {
-    type: 'transaction' | 'block' | 'contract' | 'error';
-    data: any;
-}
+4. Start the development server:
+```bash
+npm run dev
 ```
 
-## Getting Started
+5. Access the application:
+- Block Explorer: http://localhost:8080
+- Admin Panel: http://localhost:8080/admin.html
+
+## Production Deployment
 
 ### Prerequisites
-- Node.js >= 14.0.0
-- TypeScript >= 5.0.0
-- npm or yarn
 
-### Installation
+1. Install AWS CLI:
 ```bash
-git clone https://github.com/opencryptofoundation/openchain.git
-cd openchain
-npm install
-npm run build
-npm start
+# Windows (using PowerShell as Administrator)
+msiexec.exe /i https://awscli.amazonaws.com/AWSCLIV2.msi
+
+# Mac
+brew install awscli
+
+# Linux
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
 ```
 
-### Development
+2. Configure AWS credentials:
 ```bash
-npm run dev        # Start development server
-npm test          # Run tests
-npm run lint      # Lint code
-npm run format    # Format code
+aws configure
 ```
 
-## Security Features
+3. Deploy to AWS:
+```bash
+npm run aws:deploy
+```
 
-### Network Security
-- Rate limiting
-- Input validation
-- CSRF protection
-- Session management
-- API authentication
+## Admin Access
 
-### Smart Contract Security
-- Gas limit enforcement
-- Reentrancy protection
-- Overflow/underflow checks
-- Access control
-- Event logging
+Default admin credentials (change in production):
+- Username: admin
+- Password: openchain
 
-## Monitoring and Analytics
+## Available Scripts
 
-### Performance Metrics
-- Transaction throughput
-- Block propagation time
-- Contract execution time
-- Network latency
-- Resource utilization
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm test` - Run tests
+- `npm run lint` - Run linting
+- `npm run format` - Format code
+- `npm run aws:init` - Initialize AWS environment
+- `npm run aws:deploy` - Deploy to AWS
 
-### Health Monitoring
-- Node status
-- Network connectivity
-- Consensus health
-- Security status
-- Resource availability
+## Project Structure
+
+```
+openchain/
+├── src/
+│   ├── blockchain/    # Core blockchain implementation
+│   ├── simulation/    # Simulation logic
+│   ├── api/          # REST API endpoints
+│   └── websocket/    # WebSocket handlers
+├── public/           # Static files
+├── config/          # Configuration files
+├── tests/           # Test files
+└── .ebextensions/   # AWS configuration
+```
 
 ## Contributing
 
-The OpenChain project welcomes contributions from the community. Please read our [Contributing Guidelines](CONTRIBUTING.md) for details on our code of conduct and the process for submitting pull requests.
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- Open Crypto Foundation - Core Development Team
-- Blockchain Research Institute - Technical Advisory
-- Cryptography Experts - Security Review
-- Open Source Community - Contributions and Support
-
-## Contact
-
-- Website: [opencryptofoundation.org](https://opencryptofoundation.org)
-- Email: contact@opencryptofoundation.org
-- Twitter: [@OpenCryptoFDN](https://twitter.com/OpenCryptoFDN)
-
----
-
-Developed with ❤️ by the Open Crypto Foundation 
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details. 
