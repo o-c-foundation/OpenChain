@@ -11,19 +11,21 @@ export class BlockchainError extends Error {
 }
 
 export class Blockchain extends EventEmitter {
-    private chain: Block[];
-    private pendingTransactions: Transaction[];
-    private contracts: Map<string, SmartContract>;
-    private difficulty: number;
+    public chain: Block[];
+    public pendingTransactions: Transaction[];
+    public contracts: Map<string, SmartContract>;
+    public difficulty: number;
     private miningReward: number;
     private maxSupply: number;
     private circulatingSupply: number;
+    public instantTransactions: Map<string, Transaction>;
 
     constructor() {
         super();
         this.chain = [this.createGenesisBlock()];
         this.pendingTransactions = [];
         this.contracts = new Map();
+        this.instantTransactions = new Map();
         this.difficulty = 4;
         this.miningReward = 50;
         this.maxSupply = 100000000; // 100 million coins
@@ -241,5 +243,47 @@ export class Blockchain extends EventEmitter {
             pendingTransactions: this.pendingTransactions.length,
             contracts: this.contracts.size
         };
+    }
+
+    // Public methods to access protected properties
+    public getChain(): Block[] {
+        return [...this.chain];
+    }
+    
+    public getPendingBlocks(): Block[] {
+        // Placeholder for pending blocks
+        return [];
+    }
+    
+    public getBlockByHash(hash: string): Block | undefined {
+        return this.chain.find(block => block.hash === hash);
+    }
+    
+    public getBlockTransactions(blockHash: string): Transaction[] {
+        const block = this.getBlockByHash(blockHash);
+        return block ? [...block.transactions] : [];
+    }
+    
+    public getBlocks(start: number, end: number): Block[] {
+        return this.chain.slice(start, end + 1);
+    }
+    
+    public getBalanceOfAddress(address: string): number {
+        return this.getBalance(address);
+    }
+    
+    public addValidatedTransaction(tx: Transaction): void {
+        this.addTransaction(tx);
+    }
+    
+    public hasValidatedTransaction(hash: string): boolean {
+        return this.pendingTransactions.some(tx => tx.hash === hash);
+    }
+    
+    public removeBlock(hash: string): void {
+        const index = this.chain.findIndex(block => block.hash === hash);
+        if (index !== -1) {
+            this.chain.splice(index, 1);
+        }
     }
 } 

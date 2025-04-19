@@ -7,6 +7,7 @@ export class Monitor {
     private readonly alerts: Set<string>;
     private readonly performanceThresholds: Map<string, number>;
     private readonly healthChecks: Map<string, () => boolean>;
+    private isActive: boolean;
 
     constructor() {
         this.metrics = new Map();
@@ -106,8 +107,15 @@ export class Monitor {
         return (currentAverage * count + newValue) / newCount;
     }
 
-    private addAlert(message: string): void {
-        this.alerts.add(`${new Date().toISOString()} - ${message}`);
+    public addAlert(message: string): void {
+        const alert = {
+            id: this.generateAlertId(),
+            timestamp: Date.now(),
+            message: message,
+            severity: this.determineSeverity(message)
+        };
+        this.alerts.add(JSON.stringify(alert));
+        this.emit('alert', alert);
     }
 
     private isBlockchainSynced(): boolean {
@@ -123,5 +131,66 @@ export class Monitor {
     private isDatabaseHealthy(): boolean {
         // Implementation depends on your database health check
         return true;
+    }
+
+    public trackBlockProcessing(blockHash: string, processingTime: number): void {
+        this.metrics.set('blockProcessingTime', processingTime);
+        
+        const threshold = this.performanceThresholds.get('blockProcessingTime') || 1000;
+        if (processingTime > threshold) {
+            this.addAlert(`Slow block processing: ${blockHash} took ${processingTime}ms`);
+        }
+    }
+
+    public trackTransactionProcessing(txHash: string, processingTime: number): void {
+        this.metrics.set('transactionProcessingTime', processingTime);
+        
+        const threshold = this.performanceThresholds.get('transactionProcessingTime') || 500;
+        if (processingTime > threshold) {
+            this.addAlert(`Slow transaction processing: ${txHash} took ${processingTime}ms`);
+        }
+    }
+
+    public trackContractExecution(contractAddress: string, executionTime: number): void {
+        this.metrics.set('contractExecutionTime', executionTime);
+        
+        const threshold = this.performanceThresholds.get('contractExecutionTime') || 800;
+        if (executionTime > threshold) {
+            this.addAlert(`Slow contract execution: ${contractAddress} took ${executionTime}ms`);
+        }
+    }
+
+    public trackResourceUsage(memoryUsage: number, cpuUsage: number): void {
+        this.metrics.set('memoryUsage', memoryUsage);
+        this.metrics.set('cpuUsage', cpuUsage);
+        
+        const memoryThreshold = this.performanceThresholds.get('memoryUsage') || 80;
+        if (memoryUsage > memoryThreshold) {
+            this.addAlert(`High memory usage: ${memoryUsage}%`);
+        }
+        
+        const cpuThreshold = this.performanceThresholds.get('cpuUsage') || 80;
+        if (cpuUsage > cpuThreshold) {
+            this.addAlert(`High CPU usage: ${cpuUsage}%`);
+        }
+    }
+
+    public start(): void {
+        this.isActive = true;
+        console.log('Monitor started');
+    }
+    
+    public stop(): void {
+        this.isActive = false;
+        console.log('Monitor stopped');
+    }
+    
+    public getStats(): any {
+        return {
+            metrics: Object.fromEntries(this.metrics),
+            thresholds: Object.fromEntries(this.performanceThresholds),
+            alerts: this.alerts.slice(-10),  // Return the last 10 alerts
+            isActive: this.isActive
+        };
     }
 } 

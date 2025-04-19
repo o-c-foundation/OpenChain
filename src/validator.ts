@@ -1,10 +1,20 @@
-import { Block, Blockchain } from './blockchain';
+import { Blockchain } from './blockchain';
+import { Block } from './block';
 import { Transaction } from './transaction';
-import { SmartContract } from './smart-contract';
 import { NetworkMonitor } from './network-monitor';
-import { PerformanceManager } from './performance-manager';
-import { SecurityManager } from './security-manager';
-import { Monitor } from './monitor';
+import { SmartContract } from './smart-contract';
+
+// Import the monitor/performance/security classes from their correct locations
+import { PerformanceManager } from './performance/performance-manager';
+import { SecurityManager } from './security/security-manager';
+import { Monitor } from './monitoring/monitor';
+
+export class ValidatorError extends Error {
+    constructor(message: string) {
+        super(message);
+        this.name = 'ValidatorError';
+    }
+}
 
 export class Validator {
     private blockchain: Blockchain;
@@ -24,9 +34,9 @@ export class Validator {
         this.blockchain = blockchain;
         this.validatorAddress = validatorAddress;
         this.validatorPrivateKey = validatorPrivateKey;
-        this.networkMonitor = new NetworkMonitor();
-        this.performanceManager = new PerformanceManager();
-        this.securityManager = new SecurityManager();
+        this.networkMonitor = new NetworkMonitor(blockchain);
+        this.performanceManager = new PerformanceManager(blockchain);
+        this.securityManager = new SecurityManager(blockchain);
         this.monitor = new Monitor();
     }
 
@@ -66,7 +76,7 @@ export class Validator {
         console.log('Validator stopped');
     }
 
-    private async validatePendingTransactions() {
+    public async validatePendingTransactions(): Promise<void> {
         const pendingTransactions = this.blockchain.getPendingTransactions();
         
         for (const tx of pendingTransactions) {
@@ -101,7 +111,7 @@ export class Validator {
         }
     }
 
-    private async validatePendingBlocks() {
+    public async validatePendingBlocks(): Promise<void> {
         const pendingBlocks = this.blockchain.getPendingBlocks();
         
         for (const block of pendingBlocks) {

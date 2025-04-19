@@ -40,14 +40,16 @@ export class Wallet {
     }
 
     public createTransaction(to: string, amount: number, data?: any): Transaction {
-        if (amount > this.balance) {
-            throw new Error('Insufficient balance');
+        if (amount <= 0) {
+            throw new Error('Invalid amount. Must be greater than 0.');
         }
 
         return new Transaction({
             from: this.address,
-            to,
-            amount,
+            to: to,
+            amount: amount,
+            timestamp: Date.now(),
+            nonce: Math.floor(Math.random() * 1000000),
             data
         });
     }

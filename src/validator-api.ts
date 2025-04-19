@@ -4,7 +4,7 @@ import { Blockchain } from './blockchain';
 import { Transaction } from './transaction';
 import { Block } from './block';
 import { SmartContract } from './smart-contract';
-import { rateLimit } from 'express-rate-limit';
+import { RateLimit as rateLimit } from 'express-rate-limit';
 import { v4 as uuidv4 } from 'uuid';
 import { createHash } from 'crypto';
 

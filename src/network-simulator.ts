@@ -31,6 +31,7 @@ export class NetworkSimulator extends EventEmitter {
         this.nodes = new Map();
         this.simulatedLatency = simulatedLatency;
         this.educational = educational;
+        this.tooltips = new Map();
         this.initializeTooltips();
     }
 

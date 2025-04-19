@@ -6,7 +6,9 @@ export class Block {
     public readonly previousHash: string;
     public readonly timestamp: number;
     public readonly height: number;
+    public readonly index: number;
     public readonly transactions: Transaction[];
+    public readonly data: Transaction[];
     public readonly nonce: number;
     public readonly difficulty: number;
     private _size: number;
@@ -20,8 +22,10 @@ export class Block {
     ) {
         this.previousHash = previousHash;
         this.transactions = transactions;
+        this.data = transactions;
         this.timestamp = timestamp;
         this.height = height;
+        this.index = height;
         this.difficulty = difficulty;
         this.nonce = this.findNonce();
         this.hash = this.calculateHash();
@@ -44,13 +48,14 @@ export class Block {
         return Buffer.from(blockData).length;
     }
 
-    private calculateHash(): string {
+    public calculateHash(): string {
         const data = JSON.stringify({
             previousHash: this.previousHash,
             timestamp: this.timestamp,
             transactions: this.transactions.map(tx => tx.id),
             nonce: this.nonce,
-            height: this.height
+            height: this.height,
+            index: this.index
         });
         return createHash('sha256').update(data).digest('hex');
     }

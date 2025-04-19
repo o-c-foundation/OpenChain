@@ -33,7 +33,13 @@ export interface TransactionData {
 
 export class Transaction {
     public readonly id: string;
+    public readonly hash: string;
     public readonly data: TransactionData;
+    public readonly from: string;
+    public readonly to: string;
+    public readonly amount: number;
+    public readonly isContract: boolean;
+    public readonly contractAddress?: string;
     private signature?: string;
     private _size: number;
     private status: TransactionStatus;
@@ -46,6 +52,12 @@ export class Transaction {
             nonce: data.nonce || Math.floor(Math.random() * 1000000)
         };
         this.id = this.calculateHash();
+        this.hash = this.id;
+        this.from = data.from;
+        this.to = data.to;
+        this.amount = data.amount;
+        this.isContract = data.data?.type === 'contract_deployment' || data.data?.type === 'contract_interaction';
+        this.contractAddress = this.isContract ? (data.data?.type === 'contract_deployment' ? undefined : data.to) : undefined;
         this.status = TransactionStatus.PENDING;
         if (signature) {
             this.signature = signature;
@@ -54,6 +66,10 @@ export class Transaction {
     }
 
     public get size(): number {
+        return this._size;
+    }
+
+    public getSize(): number {
         return this._size;
     }
 
