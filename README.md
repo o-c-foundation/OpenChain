@@ -203,9 +203,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-- Website: [opencryptofoundation.org](https://opencryptofoundation.org)
-- Email: contact@opencryptofoundation.org
-- Twitter: [@OpenCryptoFDN](https://twitter.com/OpenCryptoFDN)
+- Website: [opencryptofoundation.com](https://opencryptofoundation.com)
+- Email: info@opencryptofoundation.com
+- Twitter: [@OpenCryptofdn](https://twitter.com/opencryptofdn)
 
 ---
 
